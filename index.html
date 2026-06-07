@@ -71,7 +71,7 @@
         .nav-btn:hover { color: #fff; background: rgba(255,255,255,0.05); }
         .nav-btn.active { color: #fff; background: rgba(255,255,255,0.05); border-left: 5px solid var(--color-red); }
 
-        .sidebar-footer { text-align: center; padding: 0 20px; }
+        .sidebar-footer { text-align: center; padding: 0 20px 30px; }
         .social-links { display: flex; justify-content: center; gap: 15px; margin-bottom: 15px; }
         .social-links a {
             color: #fff; background: rgba(255,255,255,0.1); width: 40px; height: 40px; border-radius: 50%;
@@ -290,31 +290,90 @@
             color: #111827 !important;
             border-bottom-color: #111827 !important;
         }
-        /* ================= DARK MODE STYLES ================= */
-        /* Thiết kế nút bấm trôi nổi */
-        .theme-btn {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background-color: #111827;
-            color: #fbbf24;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            z-index: 9999;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+        
         .theme-btn:hover {
             transform: scale(1.15) rotate(15deg);
         }
-        
+        #music-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999; /* Luôn nằm trên cùng các thành phần khác */
+            transition: all 0.3s ease;
+        }
+
+        #music-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Hiệu ứng nhấp nháy nhẹ nhàng khi nhạc đang phát */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); box-shadow: 0 0 10px rgba(9, 132, 227, 0.4); }
+            100% { transform: scale(1); }
+        }
+        #welcome-overlay {
+    position: fixed; 
+    top: 0; left: 0; width: 100%; height: 100%;
+    
+    /* CHÈN ẢNH VÀO ĐÂY (Thay đổi tên file nếu cần) */
+    background-image: url('welcome-bg.jpg'); 
+    
+    /* Ép ảnh hiển thị trọn vẹn, không bị lặp lại */
+    background-size: 60%; 
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: #dadada; /* Màu nền dự phòng */
+    
+    /* Căn chỉnh vị trí cho nút bấm */
+    display: flex; 
+    justify-content: center; 
+    align-items: flex-end; /* Đẩy nút bấm xuống mép dưới */
+    padding-bottom: 50px; /* Cách đáy 50px */
+    z-index: 99999;
+    transition: opacity 0.6s ease;
+}
+
+/* Nút mũi tên màu đen viền trắng để nổi bật trên nền ảnh */
+#close-welcome {
+    background: #111; 
+    border: 3px solid #fff; 
+    color: #fff;
+    font-size: 30px; 
+    width: 70px; height: 70px; 
+    border-radius: 50%;
+    cursor: pointer; 
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    
+    /* Hiệu ứng nhấp nhô liên tục để thu hút người dùng bấm vào */
+    animation: bounce 2s infinite;
+}
+
+#close-welcome:hover {
+    background: #f15a24; /* Đổi màu cam khi di chuột */
+    border-color: #f15a24;
+    transform: scale(1.1);
+}
+
+/* Kịch bản nhấp nhô cho nút */
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-15px); }
+    60% { transform: translateY(-7px); }
+}
     </style>
 </head>
 <body>
@@ -827,5 +886,64 @@
             document.getElementById('modalPdf').src = ''; // Xóa link pdf để nhẹ máy
         }
     </script>
+    <audio id="bg-music" autoplay loop>
+    <source src="lofichill1.mp3" type="audio/mpeg">
+</audio>
+
+<button id="music-toggle" title="Bật/Tắt nhạc nền">🎵</button>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const music = document.getElementById('bg-music');
+    const overlay = document.getElementById('welcome-overlay');
+    const closeBtn = document.getElementById('close-welcome');
+    const toggleBtn = document.getElementById('music-toggle'); // Nút nhạc góc màn hình nếu có
+
+    // Chỉnh âm lượng nhạc
+    if(music) music.volume = 0.3; 
+
+    // Chức năng: Bấm Mũi tên -> Tắt mờ -> Bật nhạc
+    if (closeBtn && overlay) {
+        closeBtn.addEventListener('click', function() {
+            // Bước 1: Làm mờ màn hình
+            overlay.style.opacity = '0';
+            
+            // Bước 2: Đợi 0.6s (bằng thời gian mờ) rồi XÓA HOÀN TOÀN nó khỏi web
+            setTimeout(() => {
+                overlay.style.display = 'none';
+            }, 600);
+
+            // Bước 3: Bật nhạc
+            if (music && music.paused) {
+                music.play().then(() => {
+                    if(toggleBtn) {
+                        toggleBtn.innerHTML = "⏸️";
+                        toggleBtn.style.animation = "pulse 1.5s infinite";
+                    }
+                }).catch(e => console.log("Trình duyệt chặn autoplay: ", e));
+            }
+        });
+    }
+
+    // Chức năng: Nút bật/tắt nhạc thủ công ở góc
+    if (toggleBtn && music) {
+        toggleBtn.addEventListener('click', function(event) {
+            event.stopPropagation();
+            if (music.paused) {
+                music.play();
+                toggleBtn.innerHTML = "⏸️";
+                toggleBtn.style.animation = "pulse 1.5s infinite";
+            } else {
+                music.pause();
+                toggleBtn.innerHTML = "🎵";
+                toggleBtn.style.animation = "none";
+            }
+        });
+    }
+});
+</script>
 </body>
+<div id="welcome-overlay">
+  <button id="close-welcome" title="Khám phá Portfolio">➔</button>
+</div>
 </html>
