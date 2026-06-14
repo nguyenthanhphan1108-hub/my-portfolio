@@ -374,6 +374,19 @@
     40% { transform: translateY(-15px); }
     60% { transform: translateY(-7px); }
 }
+@media (max-width: 768px) {
+        /* Ép khối to bọc ngoài chuyển sang xếp dọc */
+        .mobile-stack {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 20px !important;
+        }
+        /* Ép từng cột bên trong bung rộng ra 100% màn hình */
+        .mobile-col {
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+    }
     </style>
 </head>
 <body>
@@ -450,9 +463,9 @@
                 </div>
             </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 40px;">
+            <div class="mobile-stack" style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 40px;">
                 
-                <div class="profile-card" style="border-top: 5px solid var(--color-green);">
+                <div class="profile-card mobile-col" style="border-top: 5px solid var(--color-green);">
                     <h2 style="color: var(--color-green); margin-top: 0;"><i class="fa-solid fa-gamepad"></i> Sở thích & Quan tâm</h2>
                     <p style="line-height: 1.8; color: var(--text-muted);">
                         • <strong>Tìm hiểu AI:</strong> Nghiên cứu cách hoạt động của các mô hình Trí tuệ nhân tạo .<br><br>
@@ -469,7 +482,7 @@
                     </div>
                 </div>
 
-                <div class="profile-card" style="border-top: 5px solid var(--color-blue);">
+                <div class="profile-card mobile-col" style="border-top: 5px solid var(--color-blue);">
                     <h2 style="color: var(--color-blue); margin-top: 0;"><i class="fa-solid fa-bullseye"></i> Mục tiêu Portfolio</h2>
                     
                     <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 25px;">
